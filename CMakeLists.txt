@@ -24,7 +24,7 @@ pico_set_program_name(complete_features "pico subsystems")
 pico_set_program_version(complete_features "0.1")
 
 pico_enable_stdio_uart(complete_features 1)
-pico_enable_stdio_usb(complete_features 0)
+pico_enable_stdio_usb(complete_features 1)
 target_link_libraries(complete_features pico_stdlib)
 
 
@@ -38,4 +38,7 @@ target_link_libraries(complete_features
         )
 
 pico_add_extra_outputs(complete_features)
+if (TARGET tinyusb_device)
+message(MESSAGE "building file because TinyUSB submodule is initialized in the SDK")
+endif()
 

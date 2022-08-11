@@ -34,45 +34,49 @@ const uint led_pin_yellow = 13;//GPIO_2 PIN_
 bool LED_value = false;
 
 bool xtimer_callback(struct repeating_timer *jtimer_ptr) {
-    LED_value = !LED_value;
-
-    return 0;
+    if(LED_value){
+        LED_value = false;
+    }
+    else{
+        LED_value = true;
+    }
+    return true;
 }
 
 // UART defines
 // By default the stdout UART is `uart0`, so we will use the second one
 #define UART_ID uart1
-#define BAUD_RATE 9600
+#define BAUD_RATE 115200
 
 // Use pins 4 and 5 for UART1
 // Pins can be changed, see the GPIO function select table in the datasheet for information on GPIO assignments
-#define UART_TX_PIN 4
-#define UART_RX_PIN 5
+#define UART_TX_PIN 1
+#define UART_RX_PIN 2
 
 // GPIO defines
 // Example uses GPIO 2
-#define INPUT_BUTTON_MIDDLE 17
+#define INPUT_BUTTON_MIDDLE 16
 
-int main()
-{
-    struct repeating_timer jtimer;
+int main(){
+    repeating_timer_t jtimer;
+    int countie = 0;
     stdio_init_all();
-    add_repeating_timer_ms(720, xtimer_callback, NULL, &jtimer);
-    spi_init(SPI_PORT, 1000*1000);
-    gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
-    gpio_set_function(PIN_CS,   GPIO_FUNC_SIO);
-    gpio_set_function(PIN_SCK,  GPIO_FUNC_SPI);
-    gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
+    add_repeating_timer_ms(1200, xtimer_callback, NULL, &jtimer);
+    //spi_init(SPI_PORT, 1000*1000);
+    //gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
+    //gpio_set_function(PIN_CS,   GPIO_FUNC_SIO);
+    //gpio_set_function(PIN_SCK,  GPIO_FUNC_SPI);
+    //gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
     
-    gpio_set_dir(PIN_CS, GPIO_OUT);
-    gpio_put(PIN_CS, 1);
+    //gpio_set_dir(PIN_CS, GPIO_OUT);
+    //gpio_put(PIN_CS, 1);
 
-    i2c_init(I2C_PORT, 400*1000);
+    //i2c_init(I2C_PORT, 400*1000);
     
-    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
-    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
-    gpio_pull_up(I2C_SDA);
-    gpio_pull_up(I2C_SCL);
+    //gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
+    //gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
+    //gpio_pull_up(I2C_SDA);
+    //gpio_pull_up(I2C_SCL);
 
     // Setup UART
     uart_init(UART_ID, BAUD_RATE);
@@ -84,30 +88,35 @@ int main()
     gpio_set_dir(INPUT_BUTTON_MIDDLE, GPIO_IN);
 
     puts("******uart test********");
-    const uint led_pin_green = 25;//GPIO_25
-    const uint led_pin_amber = 14;//GPIO_14 PIN_19
+    printf("YEAH!!");
+    const uint led_pin_green_onboard = 25;//GPIO_25
+    const uint led_pin_green_th = 14;//GPIO_14 PIN_19
     const uint led_pin_yellow = 13;//GPIO_13 PIN_17
-    gpio_init(led_pin_green);
-    gpio_init(led_pin_amber);
+    gpio_init(led_pin_green_onboard);
+    gpio_init(led_pin_green_th);
     gpio_init(led_pin_yellow);
-    gpio_set_dir(led_pin_green, GPIO_OUT);
-    gpio_set_dir(led_pin_amber, GPIO_OUT);
+    gpio_set_dir(led_pin_green_onboard, GPIO_OUT);
+    gpio_set_dir(led_pin_green_th, GPIO_OUT);
     gpio_set_dir(led_pin_yellow, GPIO_OUT);
     while (true) {
             // Blink LED
-            printf("Blinking!\r\n");
-            gpio_put(led_pin_green, true);
-            gpio_put(led_pin_amber, true);
-            //gpio_put(led_pin_yellow, false);
-            sleep_ms(1210);
-            gpio_put(led_pin_green, false);
-            gpio_put(led_pin_amber, false);
-            //gpio_put(led_pin_yellow, true);
-            sleep_ms(1210);
-            gpio_put(led_pin_green, LED_value);
-            gpio_put(led_pin_amber, LED_value);
+            printf("syncing.\r\n");
+            printf(" count:  %d", countie);
+            countie = countie + 1;
+            if(LED_value){
+                printf("ON");
+            }
+            else{
+                printf("OFF");
+            }
+            sleep_ms(210);
+            gpio_put(led_pin_green_onboard, LED_value);
+            sleep_ms(310);
+            gpio_put(led_pin_green_th, LED_value);
+            sleep_ms(210);
             gpio_put(led_pin_yellow, LED_value);
-            sleep_ms(1210);
+            sleep_ms(210);
+            gpio_put(led_pin_green_onboard, false);
         }
 
     return 0;
