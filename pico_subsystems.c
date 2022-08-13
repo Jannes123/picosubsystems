@@ -106,16 +106,16 @@ int main(){
             if(LED_value){
                 printf("ON");
             }
-            else{
-                printf("OFF");
-            }
-            sleep_ms(210);
+            //else{
+            //    printf("OFF");
+            //}
+            sleep_ms(110);
             gpio_put(led_pin_green_onboard, LED_value);
-            sleep_ms(310);
+            sleep_ms(110);
             gpio_put(led_pin_green_th, LED_value);
-            sleep_ms(210);
+            sleep_ms(110);
             gpio_put(led_pin_yellow, LED_value);
-            sleep_ms(210);
+            sleep_ms(110);
             gpio_put(led_pin_green_onboard, false);
         }
 
